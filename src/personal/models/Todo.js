@@ -17,14 +17,18 @@ const ToDoSchema = new DbSchema({
     endDate: DATE_VALIDATION(false),
     toDoStatus: ENUM_VALIDATION(TaskStatusTypes, false, TaskStatusTypes.PENDING),
 
-    tasks: [{
-        name: STRING_VALIDATION(true),
-        taskStatus: ENUM_VALIDATION(TaskStatusTypes, false, TaskStatusTypes.PENDING),
-        priority: NUMBER_VALIDATION(true),
-        notes: STRING_VALIDATION(false),
-    }],
+    tasks: {
+        type: [{
+            name: STRING_VALIDATION(true),
+            taskStatus: ENUM_VALIDATION(TaskStatusTypes, false, TaskStatusTypes.PENDING),
+            priority: NUMBER_VALIDATION(true),
+            notes: STRING_VALIDATION(false, 0),
+        }],
+        required: false,
+        default: [],
+    },
 
-    notes: STRING_VALIDATION(false),
+    notes: STRING_VALIDATION(false, 0),
 });
 
 const ToDo = model("ToDo", ToDoSchema);
