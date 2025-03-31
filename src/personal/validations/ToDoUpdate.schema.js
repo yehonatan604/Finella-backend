@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { REGEX_OBJECT_ID } from "../../common/services/data/regex.service.js";
+import { commonSchemaFields } from "../../common/validations/commonSchemaFields.js";
 
 const ToDoUpdateSchema = Joi.object({
     userId: Joi.string().pattern(REGEX_OBJECT_ID).required(),
@@ -19,12 +20,7 @@ const ToDoUpdateSchema = Joi.object({
 
     notes: Joi.string().allow(""),
 
-    _id: Joi.string().pattern(REGEX_OBJECT_ID).required(),
-    __v: Joi.number().optional(),
-    createdAt: Joi.date().optional(),
-    updatedAt: Joi.date().optional(),
-    serialNumber: Joi.number().optional(),
-    status: Joi.string().optional(),
+    ...commonSchemaFields,
 });
 
 export default ToDoUpdateSchema;

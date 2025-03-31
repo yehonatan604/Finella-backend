@@ -3,13 +3,14 @@ import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
 import { repo } from "../services/BalanceEntryRepo.service.js";
 import BalanceEntrySchema from "../validations/BalanceEntry.schema.js";
+import BalanceEntryUpdateSchema from "../validations/BalanceEntryUpdate.schema.js";
 
 const balanceEntryRouter = Router();
 
 balanceEntryRouter.post("/", auth, validate(BalanceEntrySchema), async (req, res) => {
     try {
-        const workPlace = await repo.create(req.body);
-        res.status(200).json(workPlace);
+        const bEntry = await repo.create(req.body);
+        res.status(200).json(bEntry);
     } catch (err) {
         res.status(400).json(err.message);
     }
@@ -17,8 +18,8 @@ balanceEntryRouter.post("/", auth, validate(BalanceEntrySchema), async (req, res
 
 balanceEntryRouter.get("/", auth, async (req, res) => {
     try {
-        const workPlaces = await repo.getAll();
-        res.status(200).json(workPlaces);
+        const bEntries = await repo.getAll();
+        res.status(200).json(bEntries);
     } catch (err) {
         res.status(400).json(err.message);
     }
@@ -26,17 +27,17 @@ balanceEntryRouter.get("/", auth, async (req, res) => {
 
 balanceEntryRouter.get("/by", auth, async (req, res) => {
     try {
-        const workPlaces = await repo.getAll(req.query);
-        res.status(200).json(workPlaces);
+        const bEntries = await repo.getAll(req.query);
+        res.status(200).json(bEntries);
     } catch (err) {
         res.status(400).json(err.message);
     }
 });
 
-balanceEntryRouter.put("/", auth, validate(BalanceEntrySchema), async (req, res) => {
+balanceEntryRouter.put("/", auth, validate(BalanceEntryUpdateSchema), async (req, res) => {
     try {
-        const user = await repo.create(req.user._id, req.body);
-        res.status(200).json(user);
+        const bEntry = await repo.update(req.body._id, req.body);
+        res.status(200).json(bEntry);
     } catch (err) {
         res.status(400).json(err.message);
     }

@@ -19,7 +19,7 @@ const BalanceEntrySchema = new DbSchema({
     withVat: BOOLEAN_VALIDATION(true),
     isPayed: BOOLEAN_VALIDATION(false),
 
-    notes: STRING_VALIDATION(false),
+    notes: STRING_VALIDATION(false, 0),
 });
 
 const BalanceEntry = model("BalanceEntry", BalanceEntrySchema);
