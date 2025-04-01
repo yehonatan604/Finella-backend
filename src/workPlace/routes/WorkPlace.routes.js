@@ -2,7 +2,7 @@ import { Router } from "express";
 import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
 import { repo } from "../services/WorkPlaceRepo.service.js";
-import WorkPlaceSchema from "../validations/WorkPlace.schema.js";
+import WorkPlaceSchema, { WorkPlaceUpdateSchema } from "../validations/WorkPlace.schema.js";
 
 const workPlaceRouter = Router();
 
@@ -33,9 +33,9 @@ workPlaceRouter.get("/:id", auth, async (req, res) => {
     }
 });
 
-workPlaceRouter.put("/:id", auth, async (req, res) => {
+workPlaceRouter.put("/", auth, validate(WorkPlaceUpdateSchema), async (req, res) => {
     try {
-        const workPlace = await repo.update(req.params.id, req.body);
+        const workPlace = await repo.update(req.body._id, req.body);
         res.status(200).json(workPlace);
     } catch (err) {
         res.status(400).json(err.message);

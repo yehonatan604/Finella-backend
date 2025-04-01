@@ -1,9 +1,11 @@
 import Joi from "joi";
+import { commonSchemaFields } from "../../common/validations/commonSchemaFields.js";
 
-const WorkPlaceSchema = Joi.object({
+const workplaceSchemaFields = {
     name: Joi.string().required(),
     email: Joi.string().email({ tlds: { allow: false } }).allow(null, ""),
     address: Joi.object().keys({
+        ...commonSchemaFields,
         street: Joi.string().required(),
         city: Joi.string().required(),
         houseNumber: Joi.string().required(),
@@ -20,6 +22,16 @@ const WorkPlaceSchema = Joi.object({
     startDate: Joi.string().required(),
     endDate: Joi.string().allow(null, ""),
     notes: Joi.string().allow(null, ""),
+};
+
+const WorkPlaceSchema = Joi.object({
+    ...workplaceSchemaFields,
 });
 
+const WorkPlaceUpdateSchema = Joi.object({
+    ...commonSchemaFields,
+    ...workplaceSchemaFields,
+});
+
+export { WorkPlaceUpdateSchema };
 export default WorkPlaceSchema;

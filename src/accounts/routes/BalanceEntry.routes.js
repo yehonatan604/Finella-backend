@@ -2,8 +2,7 @@ import { Router } from "express";
 import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
 import { repo } from "../services/BalanceEntryRepo.service.js";
-import BalanceEntrySchema from "../validations/BalanceEntry.schema.js";
-import BalanceEntryUpdateSchema from "../validations/BalanceEntryUpdate.schema.js";
+import BalanceEntrySchema, { BalanceEntryUpdateSchema } from "../validations/BalanceEntry.schema.js";
 
 const balanceEntryRouter = Router();
 
