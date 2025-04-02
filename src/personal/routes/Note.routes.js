@@ -18,7 +18,18 @@ noteRouter.post("/", auth, validate(NoteSchema), async (req, res) => {
 noteRouter.get("/", auth, async (_, res) => {
     try {
         const notes = await repo.getAll();
+        console.log(notes);
+
         res.status(200).json(notes);
+    } catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+noteRouter.get("/by", auth, async (req, res) => {
+    try {
+        const bEntries = await repo.getAll(req.query);
+        res.status(200).json(bEntries);
     } catch (err) {
         res.status(400).json(err.message);
     }

@@ -15,7 +15,7 @@ balanceEntryRouter.post("/", auth, validate(BalanceEntrySchema), async (req, res
     }
 });
 
-balanceEntryRouter.get("/", auth, async (req, res) => {
+balanceEntryRouter.get("/", auth, async (_, res) => {
     try {
         const bEntries = await repo.getAll();
         res.status(200).json(bEntries);
