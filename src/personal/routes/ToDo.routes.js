@@ -36,8 +36,6 @@ toDoRouter.get(":/id", auth, async (req, res) => {
 
 toDoRouter.put("/", auth, validate(ToDoUpdateSchema), async (req, res) => {
     try {
-        console.log(req.body);
-
         const todo = await repo.update(req.body._id, req.body);
         res.status(200).json(todo);
     } catch (err) {

@@ -1,7 +1,8 @@
 import Joi from "joi";
 import { REGEX_OBJECT_ID } from "../../common/services/data/regex.service.js";
+import { commonSchemaFields } from "../../common/validations/commonSchemaFields.js";
 
-const NoteSchema = Joi.object({
+const notesSchemaFields = {
     userId: Joi.string().pattern(REGEX_OBJECT_ID).required(),
     name: Joi.string().required(),
     content: Joi.string().required(),
@@ -10,6 +11,16 @@ const NoteSchema = Joi.object({
     isSticky: Joi.boolean().required(),
 
     notes: Joi.string().optional(),
+};
+
+const NoteSchema = Joi.object({
+    ...notesSchemaFields,
 });
 
+const NoteUpdateSchema = Joi.object({
+    ...commonSchemaFields,
+    ...notesSchemaFields,
+});
+
+export { NoteUpdateSchema };
 export default NoteSchema;
