@@ -29,15 +29,20 @@ export class DbSchema extends Schema {
     setupDeleteMiddleware() {
         const softDelete = async function (next) {
             try {
-                const updateMethod = this.op === 'deleteMany' ? 'updateMany' : 'updateOne';
-                await this.model[updateMethod](this.getQuery(), {
+                const query = this.getQuery();
+
+                if (!query || Object.keys(query).length === 0) {
+                    return next(new NamedError("Soft delete query is empty", "EmptyDeleteQuery"));
+                }
+
+                const updateMethod = this.op === "deleteMany" ? "updateMany" : "updateOne";
+
+                await this.model[updateMethod](query, {
                     status: "inactive",
                     updatedAt: new Date()
                 });
 
-                const mockError = new NamedError("Document deleted", "DocumentDeleted");
-
-                next(mockError);
+                next(new NamedError("Document deleted", "DocumentDeleted"));
             } catch (error) {
                 next(error);
             }

@@ -9,6 +9,9 @@ export const createModelRepository = (model) => {
         async delete(id) {
             return await model.findByIdAndDelete(id);
         },
+        async undelete(id) {
+            return await model.findByIdAndUpdate(id, { status: "active" }, { new: true });
+        },
         async getAll() {
             return await model.find();
         },

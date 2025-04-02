@@ -38,6 +38,18 @@ salaryRouter.delete("/:id", auth, async (req, res) => {
         const msg = await repo.delete(req.params.id);
         res.status(200).json(msg);
     } catch (err) {
+        if (err.name === "DocumentDeleted") {
+            return res.status(200).json("Document deleted successfully");
+        }
+        res.status(400).json(err.message);
+    }
+});
+
+salaryRouter.patch("/undelete/:id", auth, async (req, res) => {
+    try {
+        await repo.undelete(req.params.id);
+        res.status(200).json("Document undeleted successfully");
+    } catch (err) {
         res.status(400).json(err.message);
     }
 });
