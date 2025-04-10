@@ -3,7 +3,8 @@ import { DbSchema } from "../../common/extensions/DbSchema.js";
 import {
     DATE_VALIDATION,
     ENUM_VALIDATION,
-    STRING_VALIDATION
+    OBJECT_ID_VALIDATION,
+    STRING_VALIDATION,
 } from "../../common/services/db/mongooseValidations.service.js";
 
 const NoteAutomationSchema = new DbSchema({

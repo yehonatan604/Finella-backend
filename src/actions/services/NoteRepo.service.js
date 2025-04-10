@@ -5,6 +5,10 @@ export const repo = {
     ...createModelRepository(Note),
 
     async getAll(query) {
+        if (!query) {
+            return Note.find({});
+        }
+
         const formattedQuery = {};
 
         if (query.type) {

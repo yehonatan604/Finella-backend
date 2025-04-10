@@ -1,12 +1,12 @@
 import { Router } from "express";
 import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
-import { repo } from "../services/NoteRepo.service.js";
-import NoteSchema, { NoteUpdateSchema } from "../validations/Note.schema.js";
+import { repo } from "../services/NoteAutomationRepo.service.js";
+import NoteAutomationSchema, { NoteAutomationUpdateSchema } from "../validations/NoteAutomation.schema.js";
 
-const noteRouter = Router();
+const noteAutomationRouter = Router();
 
-noteRouter.post("/", auth, validate(NoteSchema), async (req, res) => {
+noteAutomationRouter.post("/", auth, validate(NoteAutomationSchema), async (req, res) => {
     try {
         const note = await repo.create(req.body);
         res.status(200).json(note);
@@ -15,9 +15,10 @@ noteRouter.post("/", auth, validate(NoteSchema), async (req, res) => {
     }
 });
 
-noteRouter.get("/", auth, async (_, res) => {
+noteAutomationRouter.get("/", auth, async (_, res) => {
     try {
         const notes = await repo.getAll();
+        console.log(notes);
 
         res.status(200).json(notes);
     } catch (err) {
@@ -25,7 +26,7 @@ noteRouter.get("/", auth, async (_, res) => {
     }
 });
 
-noteRouter.get("/by", auth, async (req, res) => {
+noteAutomationRouter.get("/by", auth, async (req, res) => {
     try {
         const bEntries = await repo.getAll(req.query);
         res.status(200).json(bEntries);
@@ -34,7 +35,7 @@ noteRouter.get("/by", auth, async (req, res) => {
     }
 });
 
-noteRouter.get(":/id", auth, async (req, res) => {
+noteAutomationRouter.get(":/id", auth, async (req, res) => {
     try {
         const note = await repo.getById(req.params.id);
         res.status(200).json(note);
@@ -43,7 +44,7 @@ noteRouter.get(":/id", auth, async (req, res) => {
     }
 });
 
-noteRouter.put("/", auth, validate(NoteUpdateSchema), async (req, res) => {
+noteAutomationRouter.put("/", auth, validate(NoteAutomationUpdateSchema), async (req, res) => {
     try {
         const note = await repo.update(req.body._id, req.body);
         res.status(200).json(note);
@@ -52,7 +53,7 @@ noteRouter.put("/", auth, validate(NoteUpdateSchema), async (req, res) => {
     }
 });
 
-noteRouter.delete("/:id", auth, async (req, res) => {
+noteAutomationRouter.delete("/:id", auth, async (req, res) => {
     try {
         const msg = await repo.delete(req.params.id);
         res.status(200).json(msg);
@@ -64,7 +65,7 @@ noteRouter.delete("/:id", auth, async (req, res) => {
     }
 });
 
-noteRouter.patch("/undelete/:id", auth, async (req, res) => {
+noteAutomationRouter.patch("/undelete/:id", auth, async (req, res) => {
     try {
         const msg = await repo.undelete(req.params.id);
         res.status(200).json(msg);
@@ -75,5 +76,5 @@ noteRouter.patch("/undelete/:id", auth, async (req, res) => {
 
 
 
-export { noteRouter };
+export { noteAutomationRouter };
 
