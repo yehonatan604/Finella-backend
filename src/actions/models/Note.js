@@ -3,9 +3,11 @@ import { DbSchema } from "../../common/extensions/DbSchema.js";
 import {
     BOOLEAN_VALIDATION,
     DATE_VALIDATION,
+    ENUM_VALIDATION,
     OBJECT_ID_VALIDATION,
     STRING_VALIDATION
 } from "../../common/services/db/mongooseValidations.service.js";
+import { NoteStatusTypes } from "../enums/NoteStatusTypes.js";
 
 const NoteSchema = new DbSchema({
     userId: OBJECT_ID_VALIDATION("User", true),
@@ -15,7 +17,8 @@ const NoteSchema = new DbSchema({
 
     isSticky: BOOLEAN_VALIDATION(false),
 
-    notes: STRING_VALIDATION(false),
+    notes: { ...STRING_VALIDATION(false, 0) },
+    noteStatus: ENUM_VALIDATION(NoteStatusTypes, false, NoteStatusTypes.PENDING)
 });
 
 const Note = model("Note", NoteSchema);

@@ -10,7 +10,7 @@ const notesSchemaFields = {
 
     isSticky: Joi.boolean().required(),
 
-    notes: Joi.string().optional(),
+    notes: Joi.string().optional().allow("", null),
 };
 
 const NoteSchema = Joi.object({
