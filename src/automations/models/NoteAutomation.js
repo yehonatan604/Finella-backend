@@ -8,6 +8,7 @@ import {
 } from "../../common/services/db/mongooseValidations.service.js";
 
 const NoteAutomationSchema = new DbSchema({
+    userId: OBJECT_ID_VALIDATION("User", true),
     noteId: OBJECT_ID_VALIDATION("Note", true),
     dateTime: STRING_VALIDATION(true),
     repeat: ENUM_VALIDATION(["none", "daily", "weekly", "monthly"], false, "none"),

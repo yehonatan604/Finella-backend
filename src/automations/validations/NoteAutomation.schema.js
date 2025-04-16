@@ -3,6 +3,7 @@ import { REGEX_OBJECT_ID } from "../../common/services/data/regex.service.js";
 import { commonSchemaFields } from "../../common/validations/commonSchemaFields.js";
 
 const noteAutomationSchemaFields = {
+    userId: Joi.string().pattern(REGEX_OBJECT_ID).required(),
     noteId: Joi.string().pattern(REGEX_OBJECT_ID).required(),
     dateTime: Joi.string().required(),
     repeat: Joi.string().valid("none", "daily", "weekly", "monthly").default("none"),

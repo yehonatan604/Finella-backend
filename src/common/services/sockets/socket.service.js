@@ -1,6 +1,9 @@
 import cron from "node-cron";
 import { Server } from "socket.io";
+import Note from "../../../actions/models/Note.js";
 import NoteAutomation from "../../../automations/models/NoteAutomation.js";
+import { verifyToken } from "../jwt/jwt.service.js";
+import { print } from "../logger/print.service.js";
 
 const initializeSocketLogic = (socketServer) => {
     const io = new Server(socketServer, {
@@ -10,54 +13,59 @@ const initializeSocketLogic = (socketServer) => {
         }
     });
 
+    io.use((socket, next) => {
+        const token = socket.handshake.auth?.token;
+        const userData = verifyToken(token);
+
+        if (!userData) {
+            print("Invalid or missing token during socket connection", "error");
+            return next(new Error("Unauthorized"));
+        }
+
+        socket.user = userData;
+        socket.join(userData._id);
+        next();
+    });
+
     io.on("connection", (socket) => {
-        console.log("🟢 User connected:", socket.id);
+        print(`User connected: ${socket.user._id}`, "success");
 
-        socket.on("complete-task", (taskId) => {
-            console.log(`Task completed: ${taskId}`);
-            // Trigger your automation here
-            io.emit("task-updated", { taskId, status: "done" });
-        });
-
-        socket.on("register-user", (id) => {
-            console.log(`User registered: ${id}`);
-            socket.join(id); // Join the user to their own room
-            socket.emit("user-registered", id); // Emit a message back to the user
-        });
+        socket.emit("user-registered", socket.user._id);
 
         socket.on("disconnect", () => {
-            console.log("🔴 User disconnected:", socket.id);
+            print(`User disconnected: ${socket.user._id}`, "secondary");
         });
     });
 
     cron.schedule("* * * * *", async () => {
         const now = new Date();
-        const formatted = now.toISOString().slice(0, 16); // e.g., 2025-04-16T18:00
+        const formatted = now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
 
         const automations = await NoteAutomation.find({ status: "active" });
 
         for (const automation of automations) {
             const shouldTrigger =
                 automation.dateTime === formatted &&
-                (!automation.lastTriggeredAt || new Date(automation.lastTriggeredAt).toDateString() !== now.toDateString());
+                (!automation.lastTriggeredAt ||
+                    new Date(automation.lastTriggeredAt).toDateString() !== now.toDateString());
 
             if (shouldTrigger) {
-                // Emit to front (to specific user use io.to(userId).emit())
-                io.emit("note-automation-triggered", {
-                    noteId: automation.noteId,
-                    automationId: automation._id,
-                    message: "Scheduled note reminder!",
+                const note = await Note.findById(automation.noteId);
+                print(`Emitting to user: ${automation.userId}`, "info");
+
+                io.to(automation.userId.toString()).emit("note-automation-triggered", {
+                    title: note.name,
+                    content: note.content,
                 });
 
-                // Update lastTriggeredAt
                 automation.lastTriggeredAt = now;
                 await automation.save();
             }
         }
 
-        console.log(`[CRON] Running automation check at ${now.toISOString()}`);
+        print(`[CRON] Running automation check at ${now.toISOString()}`, "info");
     });
-}
+};
 
 export { initializeSocketLogic };
 
