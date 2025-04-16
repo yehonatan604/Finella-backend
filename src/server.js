@@ -28,7 +28,6 @@ app.use(errorHandler)
 const start = async () => {
     try {
         await connectToDb();
-        print("Connected to database", "success");
 
         server.listen(PORT, () => {
             initializeSocketLogic(server);

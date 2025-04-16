@@ -1,4 +1,6 @@
+import cron from "node-cron";
 import { Server } from "socket.io";
+import NoteAutomation from "../../../automations/models/NoteAutomation.js";
 
 const initializeSocketLogic = (socketServer) => {
     const io = new Server(socketServer, {
@@ -28,6 +30,33 @@ const initializeSocketLogic = (socketServer) => {
         });
     });
 
+    cron.schedule("* * * * *", async () => {
+        const now = new Date();
+        const formatted = now.toISOString().slice(0, 16); // e.g., 2025-04-16T18:00
+
+        const automations = await NoteAutomation.find({ status: "active" });
+
+        for (const automation of automations) {
+            const shouldTrigger =
+                automation.dateTime === formatted &&
+                (!automation.lastTriggeredAt || new Date(automation.lastTriggeredAt).toDateString() !== now.toDateString());
+
+            if (shouldTrigger) {
+                // Emit to front (to specific user use io.to(userId).emit())
+                io.emit("note-automation-triggered", {
+                    noteId: automation.noteId,
+                    automationId: automation._id,
+                    message: "Scheduled note reminder!",
+                });
+
+                // Update lastTriggeredAt
+                automation.lastTriggeredAt = now;
+                await automation.save();
+            }
+        }
+
+        console.log(`[CRON] Running automation check at ${now.toISOString()}`);
+    });
 }
 
 export { initializeSocketLogic };
