@@ -40,15 +40,13 @@ const initializeSocketLogic = (socketServer) => {
 
     cron.schedule("* * * * *", async () => {
         const now = DateTime.utc().startOf("minute");
-        print(`[CRON] Running automation check at ${now.toISO()}`, "info");
-
         const automations = await NoteAutomation.find({ status: "active" });
+
         for (const automation of automations) {
             const automationTime = DateTime.fromISO(automation.dateTime).startOf("minute");
             const lastTriggered = automation.lastTriggeredAt
                 ? DateTime.fromJSDate(automation.lastTriggeredAt)
                 : null;
-
             const nowHM = now.setZone("UTC").toFormat("HH:mm");
             const autoHM = automationTime.setZone("UTC").toFormat("HH:mm");
             let shouldTrigger = false;
