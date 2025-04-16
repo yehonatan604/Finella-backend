@@ -15,9 +15,9 @@ noteRouter.post("/", auth, validate(NoteSchema), async (req, res) => {
     }
 });
 
-noteRouter.get("/", auth, async (_, res) => {
+noteRouter.get("/", auth, async (req, res) => {
     try {
-        const notes = await repo.getAll();
+        const notes = await repo.getAll(req.user);
 
         res.status(200).json(notes);
     } catch (err) {
@@ -27,7 +27,7 @@ noteRouter.get("/", auth, async (_, res) => {
 
 noteRouter.get("/by", auth, async (req, res) => {
     try {
-        const bEntries = await repo.getAll(req.query);
+        const bEntries = await repo.getAll(req.user, req.query);
         res.status(200).json(bEntries);
     } catch (err) {
         res.status(400).json(err.message);

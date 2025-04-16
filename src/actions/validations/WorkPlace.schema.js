@@ -1,7 +1,9 @@
 import Joi from "joi";
+import { REGEX_OBJECT_ID } from "../../common/services/data/regex.service.js";
 import { commonSchemaFields } from "../../common/validations/commonSchemaFields.js";
 
 const workplaceSchemaFields = {
+    userId: Joi.string().pattern(REGEX_OBJECT_ID).required(),
     name: Joi.string().required(),
     email: Joi.string().email({ tlds: { allow: false } }).allow(null, ""),
     address: Joi.object().keys({

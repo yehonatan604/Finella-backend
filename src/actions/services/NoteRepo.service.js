@@ -4,9 +4,9 @@ import Note from "../models/Note.js";
 export const repo = {
     ...createModelRepository(Note),
 
-    async getAll(query) {
+    async getAll(user, query) {
         if (!query) {
-            return Note.find({});
+            return Note.find({ userId: user._id });
         }
 
         const formattedQuery = {};

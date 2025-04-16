@@ -18,7 +18,7 @@ toDoRouter.post("/", auth, validate(ToDoSchema), async (req, res) => {
 
 toDoRouter.get("/by", auth, async (req, res) => {
     try {
-        const todos = await repo.getAll(req.query);
+        const todos = await repo.getAll(req.user, req.query);
         res.status(200).json(todos);
     } catch (err) {
         res.status(400).json(err.message);

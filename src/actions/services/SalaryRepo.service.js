@@ -42,8 +42,10 @@ export const repo = {
         }
     },
 
-    async getAll(query) {
-        const formattedQuery = {};
+    async getAll(user, query) {
+        const formattedQuery = {
+            userId: user._id,
+        };
 
         if (query.workplaceIds) {
             formattedQuery.workPlaceId = {
@@ -76,6 +78,6 @@ export const repo = {
             }
         }
 
-        return Salary.find(formattedQuery);
+        return Salary.find(formattedQuery)
     }
 };

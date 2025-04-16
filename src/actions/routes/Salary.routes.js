@@ -17,7 +17,7 @@ salaryRouter.post("/", auth, validate(SalarySchema), async (req, res) => {
 
 salaryRouter.get("/by", auth, async (req, res) => {
     try {
-        const workPlaces = await repo.getAll(req.query);
+        const workPlaces = await repo.getAll(req.user, req.query);
         res.status(200).json(workPlaces);
     } catch (err) {
         res.status(400).json(err.message);

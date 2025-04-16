@@ -27,9 +27,4 @@ export const repo = {
             return Promise.reject(error);
         }
     },
-
-    async getAll(userId) {
-        const user = await User.findById(userId);
-        return WorkPlace.find({ _id: { $in: user.workPlaces } });
-    },
 };

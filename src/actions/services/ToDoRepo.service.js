@@ -4,8 +4,10 @@ import ToDo from "../models/Todo.js";
 export const repo = {
     ...createModelRepository(ToDo),
 
-    async getAll(query) {
-        const formattedQuery = {};
+    async getAll(user, query) {
+        const formattedQuery = {
+            userId: user._id,
+        };
 
         if (query.toDoStatus && query.toDoStatus !== "all") {
             formattedQuery.toDoStatus = query.toDoStatus;

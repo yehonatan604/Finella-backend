@@ -17,7 +17,7 @@ workPlaceRouter.post("/", auth, validate(WorkPlaceSchema), async (req, res) => {
 
 workPlaceRouter.get("/", auth, async (req, res) => {
     try {
-        const workPlaces = await repo.getAll(req.user._id);
+        const workPlaces = await repo.getAll(req.user);
         res.status(200).json(workPlaces);
     } catch (err) {
         res.status(400).json(err.message);

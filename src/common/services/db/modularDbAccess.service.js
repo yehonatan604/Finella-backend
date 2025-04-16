@@ -12,8 +12,8 @@ export const createModelRepository = (model) => {
         async undelete(id) {
             return await model.findByIdAndUpdate(id, { status: "active" }, { new: true });
         },
-        async getAll() {
-            return await model.find();
+        async getAll(user) {
+            return await model.find({ userId: user._id });
         },
         async getById(id) {
             return await model.findById(id);

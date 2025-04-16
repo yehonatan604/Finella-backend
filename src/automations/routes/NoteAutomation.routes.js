@@ -8,19 +8,17 @@ const noteAutomationRouter = Router();
 
 noteAutomationRouter.post("/", auth, validate(NoteAutomationSchema), async (req, res) => {
     try {
-        const note = await repo.create(req.body);
-        res.status(200).json(note);
+        const noteA = await repo.create(req.body);
+        res.status(200).json(noteA);
     } catch (err) {
         res.status(400).json(err.message);
     }
 });
 
-noteAutomationRouter.get("/", auth, async (_, res) => {
+noteAutomationRouter.get("/", auth, async (req, res) => {
     try {
-        const notes = await repo.getAll();
-        console.log(notes);
-
-        res.status(200).json(notes);
+        const notesA = await repo.getAll(req.user);
+        res.status(200).json(notesA);
     } catch (err) {
         res.status(400).json(err.message);
     }
@@ -28,8 +26,8 @@ noteAutomationRouter.get("/", auth, async (_, res) => {
 
 noteAutomationRouter.get("/by", auth, async (req, res) => {
     try {
-        const bEntries = await repo.getAll(req.query);
-        res.status(200).json(bEntries);
+        const notesA = await repo.getAll(req.query);
+        res.status(200).json(notesA);
     } catch (err) {
         res.status(400).json(err.message);
     }
@@ -37,8 +35,8 @@ noteAutomationRouter.get("/by", auth, async (req, res) => {
 
 noteAutomationRouter.get(":/id", auth, async (req, res) => {
     try {
-        const note = await repo.getById(req.params.id);
-        res.status(200).json(note);
+        const noteA = await repo.getById(req.params.id);
+        res.status(200).json(noteA);
     } catch (err) {
         res.status(400).json(err.message);
     }
@@ -46,8 +44,8 @@ noteAutomationRouter.get(":/id", auth, async (req, res) => {
 
 noteAutomationRouter.put("/", auth, validate(NoteAutomationUpdateSchema), async (req, res) => {
     try {
-        const note = await repo.update(req.body._id, req.body);
-        res.status(200).json(note);
+        const noteA = await repo.update(req.body._id, req.body);
+        res.status(200).json(noteA);
     } catch (err) {
         res.status(400).json(err.message);
     }
@@ -55,8 +53,7 @@ noteAutomationRouter.put("/", auth, validate(NoteAutomationUpdateSchema), async 
 
 noteAutomationRouter.delete("/:id", auth, async (req, res) => {
     try {
-        const msg = await repo.delete(req.params.id);
-        res.status(200).json(msg);
+        await repo.delete(req.params.id);
     } catch (err) {
         if (err.name === "DocumentDeleted") {
             return res.status(200).json("Document deleted successfully");
