@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import cron from "node-cron";
 import { Server } from "socket.io";
 import Note from "../../../actions/models/Note.js";
@@ -38,32 +39,53 @@ const initializeSocketLogic = (socketServer) => {
     });
 
     cron.schedule("* * * * *", async () => {
-        const now = new Date();
-        const formatted = now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
+        const now = DateTime.utc().startOf("minute");
+        print(`[CRON] Running automation check at ${now.toISO()}`, "info");
 
         const automations = await NoteAutomation.find({ status: "active" });
-
         for (const automation of automations) {
-            const shouldTrigger =
-                automation.dateTime === formatted &&
-                (!automation.lastTriggeredAt ||
-                    new Date(automation.lastTriggeredAt).toDateString() !== now.toDateString());
+            const automationTime = DateTime.fromISO(automation.dateTime).startOf("minute");
+            const lastTriggered = automation.lastTriggeredAt
+                ? DateTime.fromJSDate(automation.lastTriggeredAt)
+                : null;
+
+            const nowHM = now.setZone("UTC").toFormat("HH:mm");
+            const autoHM = automationTime.setZone("UTC").toFormat("HH:mm");
+            let shouldTrigger = false;
+
+            if (automation.repeat === "none") {
+                shouldTrigger =
+                    automationTime.equals(now) &&
+                    (!lastTriggered || !lastTriggered.hasSame(now, "minute"));
+            } else if (automation.repeat === "daily") {
+                shouldTrigger =
+                    nowHM === autoHM &&
+                    (!lastTriggered || !lastTriggered.hasSame(now, "minute"));
+            } else if (automation.repeat === "weekly") {
+                shouldTrigger =
+                    nowHM === autoHM &&
+                    now.weekday === automationTime.weekday &&
+                    (!lastTriggered || !lastTriggered.hasSame(now, "minute"));
+            } else if (automation.repeat === "monthly") {
+                shouldTrigger =
+                    nowHM === autoHM &&
+                    now.day === automationTime.day &&
+                    (!lastTriggered || !lastTriggered.hasSame(now, "minute"));
+            }
 
             if (shouldTrigger) {
                 const note = await Note.findById(automation.noteId);
-                print(`Emitting to user: ${automation.userId}`, "info");
+                print(`Triggering automation for user: ${automation.userId}`, "success");
 
                 io.to(automation.userId.toString()).emit("note-automation-triggered", {
                     title: note.name,
                     content: note.content,
                 });
 
-                automation.lastTriggeredAt = now;
+                automation.lastTriggeredAt = now.toJSDate();
                 await automation.save();
             }
         }
-
-        print(`[CRON] Running automation check at ${now.toISOString()}`, "info");
     });
 };
 
