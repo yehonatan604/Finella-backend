@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import cron from "node-cron";
 import { Server } from "socket.io";
+import { NoteStatusTypes } from "../../../actions/enums/NoteStatusTypes.js";
 import TaskStatusTypes from "../../../actions/enums/TaskStatusTypes.js";
 import Note from "../../../actions/models/Note.js";
 import ToDo from "../../../actions/models/Todo.js";
@@ -38,6 +39,20 @@ const initializeSocketLogic = (socketServer) => {
         socket.on("disconnect", () => {
             print(`User disconnected: ${socket.user._id}`, "secondary");
         });
+    });
+
+    io.on("note-read", async (socket) => {
+        const { id } = socket.data;
+        const note = await Note.findById(id);
+        if (!note) {
+            print(`Note not found: ${id}`, "error");
+            return;
+        } else {
+            await Note.updateOne(
+                { _id: id },
+                { noteStatus: NoteStatusTypes.READ }
+            );
+        }
     });
 
     cron.schedule("* * * * *", async () => {
@@ -92,29 +107,42 @@ const initializeSocketLogic = (socketServer) => {
         }
 
         for (const todo of toDos) {
+            const gotNote = await Note.findOne({
+                userId: todo.userId,
+                name: `ToDo "${todo.name}" failed`,
+            });
             const shouldTrigger = (
                 todo.endDate
                 && DateTime.fromJSDate(todo.endDate) < now
                 && todo.toDoStatus !== TaskStatusTypes.FAILED
                 && todo.toDoStatus !== TaskStatusTypes.COMPLETE
+                && (!gotNote || gotNote.noteStatus === TaskStatusTypes.PENDING)
             );
 
-            if (shouldTrigger) {
-                const note = new Note({
-                    userId: todo.userId,
-                    name: `ToDo "${todo.name}" failed`,
-                    content: `Your ToDo "${todo.name}" has failed. Please check your tasks.`,
-                    date: now.toJSDate(),
-                });
 
-                await note.save();
+            if (shouldTrigger) {
+                let finalNote = gotNote;
+
+                if (!gotNote) {
+                    const newNote = new Note({
+                        userId: todo.userId,
+                        name: `ToDo "${todo.name}" failed`,
+                        content: `Your ToDo "${todo.name}" has failed. Please check your tasks.`,
+                        date: now.toJSDate(),
+                    });
+                    finalNote = await newNote.save();
+                }
 
                 io.to(todo.userId.toString()).emit("todo-failed", {
-                    title: note.name,
-                    content: note.content,
+                    id: finalNote._id,
+                    title: finalNote.name,
+                    content: finalNote.content,
                 });
-                todo.toDoStatus = TaskStatusTypes.FAILED;
-                await todo.save();
+
+                if (todo.toDoStatus !== TaskStatusTypes.FAILED) {
+                    todo.toDoStatus = TaskStatusTypes.FAILED;
+                    await todo.save();
+                }
             }
         }
     });
