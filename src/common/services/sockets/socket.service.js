@@ -89,9 +89,14 @@ const initializeSocketLogic = (socketServer) => {
         }
 
         for (const todo of toDos) {
-            const isFailed = todo.endDate && DateTime.fromJSDate(todo.endDate) < now;
+            const shouldTrigger = (
+                todo.endDate
+                && DateTime.fromJSDate(todo.endDate) < now
+                && todo.toDoStatus !== TaskStatusTypes.FAILED
+                && todo.toDoStatus !== TaskStatusTypes.COMPLETE
+            );
 
-            if (isFailed && todo.toDoStatus !== TaskStatusTypes.FAILED) {
+            if (shouldTrigger) {
                 const note = new Note({
                     userId: todo.userId,
                     name: `ToDo "${todo.name}" failed`,
