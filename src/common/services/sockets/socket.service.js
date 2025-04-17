@@ -43,7 +43,10 @@ const initializeSocketLogic = (socketServer) => {
     cron.schedule("* * * * *", async () => {
         const now = DateTime.utc().startOf("minute");
         const automations = await NoteAutomation.find({ status: "active" });
-        const toDos = await ToDo.find({ status: "active" });
+        const toDos = await ToDo.find({
+            status: "active",
+            endDate: { $lte: new Date() }
+        });
 
         for (const automation of automations) {
             const automationTime = DateTime.fromISO(automation.dateTime).startOf("minute");
