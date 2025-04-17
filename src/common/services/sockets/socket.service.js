@@ -1,7 +1,9 @@
 import { DateTime } from "luxon";
 import cron from "node-cron";
 import { Server } from "socket.io";
+import TaskStatusTypes from "../../../actions/enums/TaskStatusTypes.js";
 import Note from "../../../actions/models/Note.js";
+import ToDo from "../../../actions/models/Todo.js";
 import NoteAutomation from "../../../automations/models/NoteAutomation.js";
 import { verifyToken } from "../jwt/jwt.service.js";
 import { print } from "../logger/print.service.js";
@@ -41,6 +43,7 @@ const initializeSocketLogic = (socketServer) => {
     cron.schedule("* * * * *", async () => {
         const now = DateTime.utc().startOf("minute");
         const automations = await NoteAutomation.find({ status: "active" });
+        const toDos = await ToDo.find({ status: "active" });
 
         for (const automation of automations) {
             const automationTime = DateTime.fromISO(automation.dateTime).startOf("minute");
@@ -82,6 +85,28 @@ const initializeSocketLogic = (socketServer) => {
 
                 automation.lastTriggeredAt = now.toJSDate();
                 await automation.save();
+            }
+        }
+
+        for (const todo of toDos) {
+            const isFailed = todo.endDate && DateTime.fromJSDate(todo.endDate) < now;
+
+            if (isFailed && todo.toDoStatus !== TaskStatusTypes.FAILED) {
+                const note = new Note({
+                    userId: todo.userId,
+                    name: `ToDo "${todo.name}" failed`,
+                    content: `Your ToDo "${todo.name}" has failed. Please check your tasks.`,
+                    date: now.toJSDate(),
+                });
+
+                await note.save();
+
+                io.to(todo.userId.toString()).emit("todo-failed", {
+                    title: note.name,
+                    content: note.content,
+                });
+                todo.toDoStatus = TaskStatusTypes.FAILED;
+                await todo.save();
             }
         }
     });
