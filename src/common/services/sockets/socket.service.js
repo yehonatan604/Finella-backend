@@ -134,7 +134,7 @@ const initializeSocketLogic = (socketServer) => {
                 }
 
                 io.to(todo.userId.toString()).emit("todo-failed", {
-                    id: finalNote._id,
+                    id: todo._id,
                     title: finalNote.name,
                     content: finalNote.content,
                 });
