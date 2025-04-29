@@ -1,11 +1,11 @@
 import { DateTime } from "luxon";
 import cron from "node-cron";
 import { Server } from "socket.io";
-import { NoteStatusTypes } from "../../../actions/enums/NoteStatusTypes.js";
-import TaskStatusTypes from "../../../actions/enums/TaskStatusTypes.js";
-import Note from "../../../actions/models/Note.js";
-import ToDo from "../../../actions/models/Todo.js";
-import NoteAutomation from "../../../automations/models/NoteAutomation.js";
+import { NoteStatusTypes } from "../../../notes/enums/NoteStatusTypes.js";
+import Note from "../../../notes/models/Note.js";
+import NoteAutomation from "../../../notes/models/NoteAutomation.js";
+import TaskStatusTypes from "../../../todos/enums/TaskStatusTypes.js";
+import ToDo from "../../../todos/models/Todo.js";
 import { verifyToken } from "../jwt/jwt.service.js";
 import { print } from "../logger/print.service.js";
 
