@@ -10,7 +10,7 @@ const generateAuthToken = (user) => {
 const generateRegisterToken = (user) => {
   const { _id } = user;
   const payloadData = { _id };
-  return jwt.sign(payloadData, MAIL_SECRET, { expiresIn: "1h" });
+  return jwt.sign(payloadData, MAIL_SECRET, { expiresIn: "30m" });
 };
 
 const verifyRegisterToken = (tokenFromClient) => {

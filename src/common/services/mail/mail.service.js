@@ -1,7 +1,7 @@
 import nodeMailer from "nodemailer";
 
-import { MAIL_PROVIDER, MAIL_PORT, MAIL_HOST, MAIL_USER, MAIL_PASS } from "../../common/services/env/env.service.js";
-import { print } from "../../common/services/logger/print.service.js";
+import { MAIL_HOST, MAIL_PASS, MAIL_PORT, MAIL_PROVIDER, MAIL_USER } from "../env/env.service.js";
+import { print } from "../logger/print.service.js";
 
 const transporter = nodeMailer.createTransport({
   service: MAIL_PROVIDER,
@@ -17,7 +17,7 @@ const transporter = nodeMailer.createTransport({
 const sendMail = async (mailOptions) => {
   try {
     await transporter.sendMail({
-      from: MAIL_USER,
+      from: "Finella",
       to: mailOptions.to,
       subject: mailOptions.subject,
       html: mailOptions.html,
@@ -30,3 +30,4 @@ const sendMail = async (mailOptions) => {
 };
 
 export { sendMail };
+

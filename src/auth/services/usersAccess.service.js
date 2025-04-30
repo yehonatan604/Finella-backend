@@ -2,10 +2,12 @@ import lodash from "lodash";
 
 import { hashPassword } from "../../common/services/data/password.service.js";
 import { pickFileds } from "../../common/services/db/pickFields.service.js";
-import { generateAuthToken } from "../../common/services/jwt/jwt.service.js";
+import { generateAuthToken, generateRegisterToken, verifyRegisterToken } from "../../common/services/jwt/jwt.service.js";
 import User from "../models/User.js";
 import UserAuth from "../models/UserAuth.js";
 
+import { sendMail } from "../../common/services/mail/mail.service.js";
+import { registerMail } from "../../common/services/mail/mails/register.mail.js";
 import { checkEmailExist, checkPassword, checkUserAuth, checkUserExist, getUserAuth } from "./usersHelper.service.js";
 
 const { pick } = lodash;
@@ -15,6 +17,7 @@ const login = async (credentials) => {
         const { email, password } = credentials;
 
         const user = await checkUserExist(email);
+        if (!user.isVerified) throw new Error("User not verified", "userNotVerified");
         await checkPassword(password, user.password);
         const token = generateAuthToken(user);
         const { user: finalUser, role } = await checkUserAuth(user, token);
@@ -30,11 +33,32 @@ const register = async (user) => {
         await checkEmailExist(user.email);
 
         const newUser = new User(user);
-        newUser.isVerified = true; // ************ Remove this line after email verification is implemented ************
         newUser.password = await hashPassword(user.password);
         await newUser.save();
 
-        return Promise.resolve(pick(newUser, pickFileds("user")));
+        const registerToken = generateRegisterToken(newUser);
+        const mailOptions = registerMail(user.email, user.name, registerToken);
+        await sendMail(mailOptions);
+
+        return Promise.resolve("User registered successfully. Please check your email to verify your account.");
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+const verifyUser = async (token) => {
+    try {
+        const isVerified = verifyRegisterToken(token);
+        if (!isVerified) throw new Error("Invalid token");
+
+        const { _id } = isVerified;
+        const user = await User.findById(_id);
+        if (!user) throw new Error("User not found");
+
+        user.isVerified = true;
+        await user.save();
+
+        return "User verified successfully";
     } catch (error) {
         return Promise.reject(error);
     }
@@ -66,24 +90,6 @@ const deleteUser = async (id) => {
     }
 };
 
-const activateUser = async (id) => {
-    try {
-        const user = await getUserById(id);
-        const userAuth = getUserAuth(user._id);
-
-        user.status = "active";
-        userAuth.status = "active";
-        userAuth.token = "";
-
-        await user.save();
-        await userAuth.save();
-
-        return Promise.resolve("User activated");
-    } catch (error) {
-        return Promise.reject(error);
-    }
-}
-
 const updateUser = async (id, data) => {
     try {
         const user = await User.findByIdAndUpdate(id, data, { new: true });
@@ -96,7 +102,7 @@ const updateUser = async (id, data) => {
 }
 
 export {
-    activateUser, deleteUser, getUserById, login,
-    register, updateUser
+    deleteUser, getUserById, login,
+    register, updateUser, verifyUser
 };
 
