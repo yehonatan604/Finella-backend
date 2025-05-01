@@ -27,9 +27,9 @@ const WorkPlaceSchema = new DbSchema({
     withVat: { type: Boolean, default: false },
 
     startDate: STRING_VALIDATION(true),
-    endDate: STRING_VALIDATION(false),
+    endDate: STRING_VALIDATION(false, 0),
 
-    notes: STRING_VALIDATION(false)
+    notes: STRING_VALIDATION(false, 0)
 });
 
 const WorkPlace = model("WorkPlace", WorkPlaceSchema);
