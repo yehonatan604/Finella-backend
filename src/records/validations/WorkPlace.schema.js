@@ -15,6 +15,7 @@ const workplaceSchemaFields = {
         zip: Joi.string().allow(null, ""),
     }).allow(null, ""),
     phone: Joi.object().keys({
+        ...commonSchemaFields,
         main: Joi.string().allow(null, ""),
         secondary: Joi.string().allow(null, ""),
     }).allow(null, ""),
