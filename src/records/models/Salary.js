@@ -13,8 +13,6 @@ const SalarySchema = new DbSchema({
         day: STRING_VALIDATION(true),
         startTime: STRING_VALIDATION(true),
         endTime: STRING_VALIDATION(true),
-        breakStart: STRING_VALIDATION(false, 0, 10),
-        breakEnd: STRING_VALIDATION(false, 0, 10),
         notes: STRING_VALIDATION(false, 0),
     }],
     notes: STRING_VALIDATION(false, 0),

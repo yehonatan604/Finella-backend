@@ -10,8 +10,6 @@ const salarySchemaFields = {
         day: Joi.string().required(),
         startTime: Joi.string().required(),
         endTime: Joi.string().required(),
-        breakStart: Joi.string().allow("").optional(),
-        breakEnd: Joi.string().allow("").optional(),
         vat: Joi.number().optional(),
         notes: Joi.string().allow("").optional(),
     })),
