@@ -21,7 +21,6 @@ const workplaceSchemaFields = {
     }).allow(null, ""),
     pricePerHour: Joi.number().allow(null, ""),
     pricePerMonth: Joi.number().allow(null, ""),
-    withVat: Joi.boolean().default(false),
     startDate: Joi.string().required(),
     endDate: Joi.string().allow(null, ""),
     notes: Joi.string().allow(null, ""),

@@ -1,7 +1,6 @@
 import { model } from "mongoose";
 import { DbSchema } from "../../common/extensions/DbSchema.js";
 import {
-    BOOLEAN_VALIDATION,
     DATE_VALIDATION,
     ENUM_VALIDATION,
     NUMBER_VALIDATION,
@@ -16,8 +15,6 @@ const BalanceEntrySchema = new DbSchema({
     type: ENUM_VALIDATION(["expense", "income"], true),
 
     price: NUMBER_VALIDATION(true),
-    withVat: BOOLEAN_VALIDATION(true),
-    isPayed: BOOLEAN_VALIDATION(false),
 
     notes: STRING_VALIDATION(false, 0),
 });

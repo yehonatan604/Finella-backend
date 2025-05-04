@@ -24,7 +24,6 @@ const WorkPlaceSchema = new DbSchema({
 
     pricePerHour: NUMBER_VALIDATION(false),
     pricePerMonth: NUMBER_VALIDATION(false),
-    withVat: { type: Boolean, default: false },
 
     startDate: STRING_VALIDATION(true),
     endDate: STRING_VALIDATION(false, 0),

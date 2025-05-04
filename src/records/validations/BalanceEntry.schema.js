@@ -7,11 +7,7 @@ const balanceEntrySchemaFields = {
     name: Joi.string().required(),
     date: Joi.date().required(),
     type: Joi.string().valid("expense", "income").required(),
-
     price: Joi.number().required(),
-    withVat: Joi.boolean().optional().default(false),
-    isPayed: Joi.boolean().optional().default(false),
-
     notes: Joi.string().optional().allow("", null),
 };
 
