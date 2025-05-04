@@ -7,11 +7,11 @@ const ToDoSchema = Joi.object({
     description: Joi.string().allow(""),
     startDate: Joi.date().required(),
     endDate: Joi.date().allow("").optional(),
-    toDoStatus: Joi.string().optional().default("pending"),
+    toDoStatus: Joi.string().optional().default("PENDING"),
 
     tasks: Joi.array().items(Joi.object({
         name: Joi.string().required(),
-        taskStatus: Joi.string().optional().default("pending"),
+        taskStatus: Joi.string().optional().default("PENDING"),
         priority: Joi.number().required(),
         notes: Joi.string().allow(""),
     })),
