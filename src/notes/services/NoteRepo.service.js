@@ -5,11 +5,9 @@ export const repo = {
     ...createModelRepository(Note),
 
     async getAll(user, query) {
-        if (!query) {
-            return Note.find({ userId: user._id });
-        }
-
-        const formattedQuery = {};
+        const formattedQuery = {
+            userId: user._id,
+        };
 
         if (query.type) {
             formattedQuery.type = query.type;
@@ -44,6 +42,6 @@ export const repo = {
             }
         }
 
-        return Note.find(formattedQuery);
+        return Note.find(formattedQuery)
     }
 };
