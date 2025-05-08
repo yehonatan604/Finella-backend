@@ -10,6 +10,7 @@ import {
 
 const BalanceEntrySchema = new DbSchema({
     userId: OBJECT_ID_VALIDATION("User", true),
+    salaryId: OBJECT_ID_VALIDATION("Salary", false),
     name: STRING_VALIDATION(true),
     date: DATE_VALIDATION(true),
     type: ENUM_VALIDATION(["expense", "income"], true),

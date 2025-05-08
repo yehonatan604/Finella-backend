@@ -137,6 +137,7 @@ const initializeSocketLogic = (socketServer) => {
                     id: todo._id,
                     title: finalNote.name,
                     content: finalNote.content,
+                    noteId: finalNote._id,
                 });
 
                 if (todo.toDoStatus !== TaskStatusTypes.FAILED) {

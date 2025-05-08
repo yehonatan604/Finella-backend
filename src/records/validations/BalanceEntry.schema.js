@@ -4,6 +4,7 @@ import { commonSchemaFields } from "../../common/validations/commonSchemaFields.
 
 const balanceEntrySchemaFields = {
     userId: Joi.string().pattern(REGEX_OBJECT_ID).required(),
+    salaryId: Joi.string().pattern(REGEX_OBJECT_ID).optional().allow("", null),
     name: Joi.string().required(),
     date: Joi.date().required(),
     type: Joi.string().valid("expense", "income").required(),
