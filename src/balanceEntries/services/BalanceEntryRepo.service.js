@@ -4,9 +4,10 @@ import BalanceEntry from "../models/BalanceEntry.js";
 export const repo = {
     ...createModelRepository(BalanceEntry),
 
-    async getAll(query) {
-        const formattedQuery = {};
-
+    async getAll(user, query) {
+        const formattedQuery = {
+            userId: user._id,
+        };
         if (query.type) {
             formattedQuery.type = query.type;
         }
@@ -15,7 +16,6 @@ export const repo = {
             const startYear = query.fromYear ? parseInt(query.fromYear) : new Date().getFullYear();
             const endYear = query.toYear ? parseInt(query.toYear) : startYear;
 
-            // Convert months to an array of numbers (1-12)
             const monthsArray = query.months
                 ? (Array.isArray(query.months)
                     ? query.months.map(m => parseInt(m))
@@ -41,6 +41,9 @@ export const repo = {
         }
 
         return BalanceEntry.find(formattedQuery);
-    }
+    },
 
+    getById: async () => {
+        throw new Error("Not implemented");
+    },
 };
