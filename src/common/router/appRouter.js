@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { authRouter } from "../../auth/routes/auth.routes.js";
+import { balanceEntryRouter } from "../../balanceEntries/routes/BalanceEntry.routes.js";
 import { noteRouter } from "../../notes/routes/Note.routes.js";
 import { noteAutomationRouter } from "../../notes/routes/NoteAutomation.routes.js";
-import { balanceEntryRouter } from "../../records/routes/BalanceEntry.routes.js";
-import { salaryRouter } from "../../records/routes/Salary.routes.js";
-import { workPlaceRouter } from "../../records/routes/WorkPlace.routes.js";
+import { salaryRouter } from "../../salaries/routes/Salary.routes.js";
 import { toDoRouter } from "../../todos/routes/ToDo.routes.js";
+import { workPlaceRouter } from "../../workplaces/routes/WorkPlace.routes.js";
 
 const appRouter = Router();
 
