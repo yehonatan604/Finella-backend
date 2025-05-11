@@ -8,7 +8,7 @@ const notesSchemaFields = {
     name: Joi.string().required(),
     content: Joi.string().required(),
     date: Joi.date().required(),
-    noteStatus: Joi.string().valid(...Object.values(NoteStatusTypes)).allow("", null).optional(),
+    noteStatus: Joi.string().optional().valid(...Object.values(NoteStatusTypes)).allow("", null),
 
     isSticky: Joi.boolean().required(),
 
