@@ -4,6 +4,18 @@ import RoleTypes from "../enums/RoleTypes.js";
 import User from "../models/User.js";
 import UserAuth from "../models/UserAuth.js";
 
+const getUserAuth = async (userId) => {
+    const userAuth = await UserAuth.findOne({ userId });
+    if (!userAuth) throw new Error("User not authenticated");
+    return userAuth;
+}
+
+const getUserById = async (id) => {
+    const user = await User.findById(id);
+    if (!user) throw new Error("User not found")
+    else return user;
+}
+
 const checkEmailExist = async (email) => {
     const checkUser = await User.findOne({ email });
 
@@ -19,7 +31,7 @@ const checkUserExist = async (email) => {
 
 const checkPassword = async (password, user) => {
     const checkPassword = await verifyPassword(password, user.password);
-    const userAuth = await UserAuth.findOne({ userId: user._id });
+    const userAuth = await getUserAuth(user._id);
     const today = new Date();
 
     const checkDiff = () => {
@@ -71,19 +83,6 @@ const checkUserAuth = async (user, token) => {
 
     return { user, role };
 }
-
-const getUserAuth = async (userId) => {
-    const userAuth = await UserAuth.findOne({ userId });
-    if (!userAuth) throw new Error("User not authenticated");
-    return userAuth;
-}
-
-const getUserById = async (id) => {
-    const user = await User.findById(id);
-    if (!user) throw new Error("User not found")
-    else return user;
-}
-
 
 export { checkEmailExist, checkPassword, checkUserAuth, checkUserExist, getUserAuth, getUserById };
 
