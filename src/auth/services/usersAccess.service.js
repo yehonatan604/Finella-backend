@@ -18,7 +18,7 @@ const login = async (credentials) => {
 
         const user = await checkUserExist(email);
         if (!user.isVerified) throw new Error("User not verified", "userNotVerified");
-        await checkPassword(password, user.password);
+        await checkPassword(password, user);
         const token = generateAuthToken(user);
         const { user: finalUser, role } = await checkUserAuth(user, token);
 

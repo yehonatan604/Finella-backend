@@ -17,9 +17,36 @@ const checkUserExist = async (email) => {
     return user;
 }
 
-const checkPassword = async (password, storedPassword) => {
-    const checkPassword = await verifyPassword(password, storedPassword);
-    if (!checkPassword) throw new Error("Wrong password");
+const checkPassword = async (password, user) => {
+    const checkPassword = await verifyPassword(password, user.password);
+    const userAuth = await UserAuth.findOne({ userId: user._id });
+    const today = new Date();
+
+    const checkDiff = () => {
+        const diff = Math.abs(today - userAuth.lastFailedLoginTry);
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+    }
+
+    if (!checkPassword) {
+        if (userAuth.loginTries >= 3) {
+            if (checkDiff() < 2) {
+                console.log("User is blocked for 24 hours");
+                throw new Error("Too many login attempts", "userBlocked");
+            }
+        } else {
+            userAuth.loginTries += 1;
+            userAuth.lastFailedLoginTry = today;
+            await userAuth.save();
+        }
+        throw new Error("Wrong password");
+    } else {
+        if (checkDiff() < 2) {
+            throw new Error("Too many login attempts", "userBlocked");
+        }
+        userAuth.loginTries = 0;
+        userAuth.lastFailedLoginTry = null;
+        await userAuth.save();
+    }
 }
 
 const checkUserAuth = async (user, token) => {
@@ -59,3 +86,4 @@ const getUserById = async (id) => {
 
 
 export { checkEmailExist, checkPassword, checkUserAuth, checkUserExist, getUserAuth, getUserById };
+
