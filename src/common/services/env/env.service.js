@@ -13,5 +13,6 @@ export const MAIL_USER = process.env.MAIL_USER;
 export const MAIL_PASS = process.env.MAIL_PASS;
 export const MAIL_HOST = process.env.MAIL_HOST;
 export const MAIL_PORT = process.env.MAIL_PORT;
+export const SECURITY_KEY = process.env.SECURITY_KEY;
 export const API_URL = process.env.API_URL;
 

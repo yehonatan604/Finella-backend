@@ -2,12 +2,14 @@ import lodash from "lodash";
 
 import { hashPassword } from "../../common/services/data/password.service.js";
 import { pickFileds } from "../../common/services/db/pickFields.service.js";
-import { generateAuthToken, generateRegisterToken, verifyRegisterToken } from "../../common/services/jwt/jwt.service.js";
+import { generateAuthToken, generateRegisterToken, verifyRegisterToken, verifySecurityToken } from "../../common/services/jwt/jwt.service.js";
 import User from "../models/User.js";
 import UserAuth from "../models/UserAuth.js";
 
+import { DateTime } from "luxon";
 import { sendMail } from "../../common/services/mail/mail.service.js";
 import { registerMail } from "../../common/services/mail/mails/register.mail.js";
+import Note from "../../notes/models/Note.js";
 import { checkEmailExist, checkPassword, checkUserAuth, checkUserExist, getUserAuth } from "./usersHelper.service.js";
 
 const { pick } = lodash;
@@ -39,6 +41,17 @@ const register = async (user) => {
         const registerToken = generateRegisterToken(newUser);
         const mailOptions = registerMail(user.email, user.name, registerToken);
         await sendMail(mailOptions);
+
+        const note = new Note({
+            userId: newUser._id,
+            name: `Welcome!`,
+            content: `Hello ${user.name.first} ${user.name.last}, welcome to Finella!`,
+            date: DateTime.now().toJSDate(),
+            isSticky: false,
+            notes: "",
+            noteStatus: "PENDING",
+        });
+        await note.save();
 
         return Promise.resolve("User registered successfully. Please check your email to verify your account.");
     } catch (error) {
@@ -118,8 +131,30 @@ const changePassword = async (id, password, newPassword) => {
     }
 }
 
+const secureUser = async (token) => {
+    try {
+        const id = verifySecurityToken(token)._id;
+        if (!id) throw new Error("Invalid token");
+        const user = await User.findById(id);
+        if (!user) throw new Error("User not found");
+
+        const userAuth = await UserAuth.findOne({ userId: user._id });
+        if (!userAuth) throw new Error("User not found");
+
+        userAuth.loginTries = 0;
+        userAuth.lastFailedLoginTry = null;
+        userAuth.token = null;
+
+        await userAuth.save();
+        return Promise.resolve("Account secured successfully, please login.");
+    }
+    catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 export {
     changePassword, deleteUser, getUserById, login,
-    register, updateUser, verifyUser
+    register, secureUser, updateUser, verifyUser
 };
 

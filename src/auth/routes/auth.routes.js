@@ -2,7 +2,7 @@ import { Router } from "express";
 import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
 import { createHtmlResponse } from "../services/htmlResponse.service.js";
-import { changePassword, deleteUser, getUserById, login, register, updateUser, verifyUser } from "../services/usersAccess.service.js";
+import { changePassword, deleteUser, getUserById, login, register, secureUser, updateUser, verifyUser } from "../services/usersAccess.service.js";
 import ChangePasswordSchema from "../validations/ChangePassword.schema.js";
 import LoginSchema from "../validations/Login.schema.js";
 import RegisterSchema from "../validations/Register.schema.js";
@@ -45,6 +45,16 @@ authRouter.get("/verify/:token", async (req, res) => {
     try {
         const { token } = req.params;
         const msg = await verifyUser(token);
+        res.status(200).send(createHtmlResponse.success(msg));
+    } catch (err) {
+        res.status(400).send(createHtmlResponse.error(err.message));
+    }
+});
+
+authRouter.get("/secure/:token", async (req, res) => {
+    try {
+        const { token } = req.params;
+        const msg = await secureUser(token);
         res.status(200).send(createHtmlResponse.success(msg));
     } catch (err) {
         res.status(400).send(createHtmlResponse.error(err.message));

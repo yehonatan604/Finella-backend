@@ -6,7 +6,7 @@ import Note from "../../../notes/models/Note.js";
 import NoteAutomation from "../../../notes/models/NoteAutomation.js";
 import TaskStatusTypes from "../../../todos/enums/TaskStatusTypes.js";
 import ToDo from "../../../todos/models/Todo.js";
-import { verifyToken } from "../jwt/jwt.service.js";
+import { verifyAuthToken } from "../jwt/jwt.service.js";
 import { print } from "../logger/print.service.js";
 
 const initializeSocketLogic = (socketServer) => {
@@ -19,7 +19,7 @@ const initializeSocketLogic = (socketServer) => {
 
     io.use((socket, next) => {
         const token = socket.handshake.auth?.token;
-        const userData = verifyToken(token);
+        const userData = verifyAuthToken(token);
 
         if (!userData) {
             print("Invalid or missing token during socket connection", "error");

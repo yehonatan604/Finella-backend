@@ -1,12 +1,12 @@
 import User from "../../auth/models/User.js";
-import { verifyToken } from "../services/jwt/jwt.service.js";
+import { verifyAuthToken } from "../services/jwt/jwt.service.js";
 
 const auth = async (req, res, next) => {
     try {
         const tokenFromClient = req.header("auth-token");
         if (!tokenFromClient)
             throw new Error("Authentication Error: Please Login");
-        const userInfo = verifyToken(tokenFromClient);
+        const userInfo = verifyAuthToken(tokenFromClient);
         const user = await User.findById(userInfo._id);
         if (!user.isVerified)
             throw new Error("Authentication Error: Please verify your email");

@@ -6,7 +6,7 @@ import RoleTypes from '../enums/RoleTypes.js';
 
 const UserAuthSchema = new DbSchema({
     userId: OBJECT_ID_VALIDATION("User", true),
-    token: STRING_VALIDATION(true),
+    token: STRING_VALIDATION(false, 0),
     role: {
         permission: ENUM_VALIDATION(RoleTypes, true),
         name: ENUM_VALIDATION(objectFlip(RoleTypes), true),

@@ -1,5 +1,8 @@
 import { getPropName } from "../../common/services/data/obj.service.js";
 import { verifyPassword } from "../../common/services/data/password.service.js";
+import { generateSecurityToken } from "../../common/services/jwt/jwt.service.js";
+import { sendMail } from "../../common/services/mail/mail.service.js";
+import { manyAttemptsMail } from "../../common/services/mail/mails/manyAttempts.mail.js";
 import RoleTypes from "../enums/RoleTypes.js";
 import User from "../models/User.js";
 import UserAuth from "../models/UserAuth.js";
@@ -43,6 +46,9 @@ const checkPassword = async (password, user) => {
         if (userAuth.loginTries >= 3) {
             if (checkDiff() < 2) {
                 console.log("User is blocked for 24 hours");
+                const token = generateSecurityToken(user);
+                const mail = manyAttemptsMail(user.email, user.name, token);
+                await sendMail(mail);
                 throw new Error("Too many login attempts", "userBlocked");
             }
         } else {
