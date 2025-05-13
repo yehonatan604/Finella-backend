@@ -18,9 +18,7 @@ export const forgotPasswordrMail = (email, name, token) => {
                         </a>
                     </div>
 
-                    <p>If you did not request a password reset, please contact our support team.</p>
-                    <p>Thank you for using our service!</p>
-                    <p>Best regards,<br>The Finella Team</p>
+                    <p>The Finella Team</p>
                 </div>
             </div>
         `
