@@ -2,7 +2,9 @@ import { Router } from "express";
 import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
 import { createHtmlResponse } from "../services/htmlResponse.service.js";
-import { changePassword, deleteUser, getUserById, login, register, secureUser, updateUser, verifyUser } from "../services/usersAccess.service.js";
+import {
+    changePassword, deleteUser, forgotPassword, getUserById, login, register, resetPassword, secureUser, updateUser, verifyUser
+} from "../services/usersAccess.service.js";
 import ChangePasswordSchema from "../validations/ChangePassword.schema.js";
 import LoginSchema from "../validations/Login.schema.js";
 import RegisterSchema from "../validations/Register.schema.js";
@@ -61,6 +63,26 @@ authRouter.get("/secure/:token", async (req, res) => {
     }
 });
 
+authRouter.get("/reset/:token", async (req, res) => {
+    try {
+        const { token } = req.params;
+        const msg = await resetPassword(token);
+        res.status(200).send(createHtmlResponse.success(msg));
+    } catch (err) {
+        res.status(400).send(createHtmlResponse.error(err.message));
+    }
+});
+
+authRouter.get("/forgot-password/:email", async (req, res) => {
+    try {
+        const { email } = req.params;
+        const msg = await forgotPassword(email);
+        res.status(200).send(createHtmlResponse.success(msg));
+    } catch (err) {
+        res.status(400).send(createHtmlResponse.error(err.message));
+    }
+});
+
 authRouter.put("/", auth, validate(UpdateSchema), async (req, res) => {
     try {
         const user = await updateUser(req.user._id, req.body);
@@ -79,8 +101,6 @@ authRouter.patch("/change-password", auth, validate(ChangePasswordSchema), async
         res.status(400).json(err.message);
     }
 });
-
-
 
 authRouter.delete("/:id", auth, async (req, res) => {
     try {

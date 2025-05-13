@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET, MAIL_SECRET, SECURITY_KEY } from "../env/env.service.js";
+import { JWT_SECRET, MAIL_SECRET, PASSWORD_RESET_KEY, SECURITY_KEY } from "../env/env.service.js";
 
 const generateAuthToken = (user) => {
   const { _id } = user;
@@ -44,6 +44,22 @@ const verifySecurityToken = (tokenFromClient) => {
   }
 }
 
+const generatePasswordResetToken = (user) => {
+  const { _id } = user;
+  const payloadData = { _id };
+  return jwt.sign(payloadData, PASSWORD_RESET_KEY, { expiresIn: "30m" });
+}
 
-export { generateAuthToken, generateRegisterToken, generateSecurityToken, verifyAuthToken, verifyRegisterToken, verifySecurityToken };
+const verifyPasswordResetToken = (tokenFromClient) => {
+  try {
+    return jwt.verify(tokenFromClient, PASSWORD_RESET_KEY);
+  } catch (error) {
+    return null;
+  }
+}
+
+export {
+  generateAuthToken, generatePasswordResetToken, generateRegisterToken, generateSecurityToken,
+  verifyAuthToken, verifyPasswordResetToken, verifyRegisterToken, verifySecurityToken
+};
 

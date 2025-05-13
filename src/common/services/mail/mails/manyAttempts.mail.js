@@ -3,7 +3,7 @@ import { API_URL } from "../../env/env.service.js";
 export const manyAttemptsMail = (email, name, token) => {
     return {
         to: email,
-        subject: "Finella Multiple Login Attempts Detected",
+        subject: "Finella - Multiple Login Attempts Detected",
         html: `
             <div style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px; color: #333;">
                 <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
