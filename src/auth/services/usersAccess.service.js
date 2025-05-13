@@ -101,8 +101,25 @@ const updateUser = async (id, data) => {
     }
 }
 
+const changePassword = async (id, password, newPassword) => {
+    try {
+        const user = await User.findById(id);
+        if (!user) throw new Error("User not found");
+
+        await checkPassword(password, user);
+        const hashedNewPassword = await hashPassword(newPassword);
+        if (hashedNewPassword === user.password) throw new Error("New password cannot be the same as the old password");
+        user.password = hashedNewPassword;
+        await user.save();
+        return Promise.resolve("Password changed successfully");
+    }
+    catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 export {
-    deleteUser, getUserById, login,
+    changePassword, deleteUser, getUserById, login,
     register, updateUser, verifyUser
 };
 

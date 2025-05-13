@@ -18,6 +18,20 @@ const UserAuthSchema = new DbSchema({
         max: 3,
     },
     lastFailedLoginTry: DATE_VALIDATION(false),
+    recoveryCode: {
+        type: Object,
+        required: false,
+        default: {
+            code: null,
+            expiresAt: null,
+        },
+        validate: {
+            validator: function (v) {
+                return v === null || (v.hasOwnProperty('code') && v.hasOwnProperty('expiresAt'));
+            },
+            message: props => `${props.value} is not a valid recovery code!`
+        },
+    },
 });
 
 const UserAuth = model("UserAuth", UserAuthSchema);

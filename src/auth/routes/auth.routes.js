@@ -2,7 +2,8 @@ import { Router } from "express";
 import auth from "../../common/middlewares/auth.mw.js";
 import { validate } from "../../common/middlewares/validation.mw.js";
 import { createHtmlResponse } from "../services/htmlResponse.service.js";
-import { deleteUser, getUserById, login, register, updateUser, verifyUser } from "../services/usersAccess.service.js";
+import { changePassword, deleteUser, getUserById, login, register, updateUser, verifyUser } from "../services/usersAccess.service.js";
+import ChangePasswordSchema from "../validations/ChangePassword.schema.js";
 import LoginSchema from "../validations/Login.schema.js";
 import RegisterSchema from "../validations/Register.schema.js";
 import UpdateSchema from "../validations/Update.schema.js";
@@ -58,6 +59,18 @@ authRouter.put("/", auth, validate(UpdateSchema), async (req, res) => {
         res.status(400).json(err.message);
     }
 });
+
+authRouter.patch("/change-password", auth, validate(ChangePasswordSchema), async (req, res) => {
+    try {
+        const { password, newPassword } = req.body;
+        const msg = await changePassword(req.user._id, password, newPassword);
+        res.status(200).json(msg);
+    } catch (err) {
+        res.status(400).json(err.message);
+    }
+});
+
+
 
 authRouter.delete("/:id", auth, async (req, res) => {
     try {
