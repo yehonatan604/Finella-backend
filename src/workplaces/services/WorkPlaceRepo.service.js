@@ -17,9 +17,9 @@ export const repo = {
             // Save the workplace first
             await newWorkPlace.save();
 
-            // Update and save the user
-            user.workPlaces.push(newWorkPlace._id);
-            await user.save();
+            // // Update and save the user
+            // user.workPlaces.push(newWorkPlace._id);
+            // await user.save();
 
             return newWorkPlace;
         } catch (error) {
