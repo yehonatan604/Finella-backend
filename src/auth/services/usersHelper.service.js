@@ -45,7 +45,7 @@ const checkPassword = async (password, user) => {
     if (!checkPassword) {
         if (userAuth.loginTries >= 3) {
             if (checkDiff() < 2) {
-                console.log("User is blocked for 24 hours");
+                console.log(`User:${user._id} is blocked for 24 hours`);
                 const token = generateSecurityToken(user);
                 const mail = manyAttemptsMail(user.email, user.name, token);
                 await sendMail(mail);

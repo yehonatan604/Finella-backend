@@ -18,7 +18,8 @@ export const manyAttemptsMail = (email, name, token) => {
                         </a>
                     </div>
 
-                    <p>it is advised to change your password immediately</p>
+                    <p>it is advised to change your password immediately.</p>
+                    <p>Forgot your password? <a href="${API_URL}/auth/forgot-password/${email}" style="color: #007bff; text-decoration: none;">Click here</a></p>
                 </div>
             </div>
         `
