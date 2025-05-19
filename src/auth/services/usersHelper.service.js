@@ -63,8 +63,8 @@ const checkPassword = async (password, user) => {
         }
         userAuth.loginTries = 0;
         userAuth.lastFailedLoginTry = null;
-        await userAuth.save();
     }
+    await userAuth.save();
 }
 
 const checkUserAuth = async (user) => {
