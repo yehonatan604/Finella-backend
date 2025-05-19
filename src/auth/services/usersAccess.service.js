@@ -1,17 +1,15 @@
 import lodash from "lodash";
-
+import { DateTime } from "luxon";
 import { hashPassword } from "../../common/services/data/password.service.js";
 import { pickFileds } from "../../common/services/db/pickFields.service.js";
 import { generateAuthToken, generatePasswordResetToken, generateRegisterToken, verifyPasswordResetToken, verifyRegisterToken, verifySecurityToken } from "../../common/services/jwt/jwt.service.js";
-import User from "../models/User.js";
-import UserAuth from "../models/UserAuth.js";
-
-import { DateTime } from "luxon";
 import { sendMail } from "../../common/services/mail/mail.service.js";
 import { forgotPasswordrMail } from "../../common/services/mail/mails/forgotPassword.mail.js";
 import { registerMail } from "../../common/services/mail/mails/register.mail.js";
 import { resetPasswordMail } from "../../common/services/mail/mails/resetPassword.mail.js";
 import Note from "../../notes/models/Note.js";
+import User from "../models/User.js";
+import UserAuth from "../models/UserAuth.js";
 import { checkEmailExist, checkPassword, checkUserAuth, checkUserExist, getUserAuth } from "./usersHelper.service.js";
 
 const { pick } = lodash;
@@ -24,7 +22,7 @@ const login = async (credentials) => {
         if (!user.isVerified) throw new Error("User not verified", "userNotVerified");
         await checkPassword(password, user);
         const token = generateAuthToken(user);
-        const { user: finalUser, role } = await checkUserAuth(user, token);
+        const { user: finalUser, role } = await checkUserAuth(user);
 
         return Promise.resolve({ user: finalUser, role, token });
     } catch (error) {

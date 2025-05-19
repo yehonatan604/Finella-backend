@@ -67,7 +67,7 @@ const checkPassword = async (password, user) => {
     }
 }
 
-const checkUserAuth = async (user, token) => {
+const checkUserAuth = async (user) => {
     const userAuth = await UserAuth.findOne({ userId: user._id });
 
     const role = {
@@ -78,12 +78,8 @@ const checkUserAuth = async (user, token) => {
     if (!userAuth) {
         const userAuth = new UserAuth({
             userId: user._id,
-            token,
             role
         });
-        await userAuth.save();
-    } else {
-        userAuth.token = token;
         await userAuth.save();
     }
 

@@ -6,12 +6,14 @@ const auth = async (req, res, next) => {
         const tokenFromClient = req.header("auth-token");
         if (!tokenFromClient)
             throw new Error("Authentication Error: Please Login");
+
         const userInfo = verifyAuthToken(tokenFromClient);
         const user = await User.findById(userInfo._id);
         if (!user.isVerified)
             throw new Error("Authentication Error: Please verify your email");
         if (!userInfo)
             throw new Error("Authentication Error: Unauthorize user");
+
         req.user = userInfo;
         return next();
     } catch (error) {
