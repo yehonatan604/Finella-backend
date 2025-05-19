@@ -73,7 +73,6 @@ The Finella Backend powers the Finella Frontend by providing RESTful APIs and We
    - A scheduled service (`src/services/automation.service.js`) queries due automations every minute
    - Emits events via Socket.IO to the specific user room
    - Updates `lastTriggeredAt` to avoid duplicate triggers
-7. **Error Handling**: NotFound and Error middleware in `common/middlewares` catch 404s and format all errors into JSON with proper status codes.
 
 ---
 
