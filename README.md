@@ -208,10 +208,10 @@ src/
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License.
 
 ---
 
 ## Author
 
-Developed by [Yehonatan Moravia](https://github.com/yehonatan604) 🎉
+Developed by [Yehonatan Moravia](https://github.com/yehonatan604)
